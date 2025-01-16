@@ -1,0 +1,17 @@
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+.env
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+htmlcov/
+.DS_Store
+.vscode/
+.idea/
+.mypy_cache/
+.pyright/
+.pyc

@@ -1,0 +1,6 @@
+scipy
+sounddevice
+librosa
+transformers
+datasets
+torch
