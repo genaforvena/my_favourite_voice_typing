@@ -1,129 +1,92 @@
-# Voice Typing System: Preserving Raw Speech
+# Voice Typing System: Preserving Raw Speech 
+
+A minimalist approach for capturing every nuance of spoken language. Filler words, stutters, and accents stay intact. No fancy punctuation. No TTS loop. No external normalisation.
+
+---
 
 ## Concept Overview
-
-This system is designed to transcribe spoken words exactly as they are, without imposing corrections, punctuation, or standardization. It preserves the speaker’s unique voice, including accents, speech patterns, and quirks. The system consists of two main components:
-1. A **phonetic model** for raw transcription.
-2. A **fine-tuned GPT-2 model** (or similar) for mapping phonetic transcriptions to correct textual forms.
-
-The system is intended for **personal use**, with a focus on adapting to the user’s specific speech patterns over time. Instead of relying on external transcription services, the user reads existing texts aloud, ensuring high-quality, personalized data for training.
+- **Raw Transcription**: Record speech exactly as it is uttered.  
+- **Phonetic Mapping**: Align audio with phonetic units.  
+- **Minimal Language Model**: Fine-tune a small transformer (GPT-2 or T5) on a tiny, carefully curated dataset.
 
 ---
 
 ## Key Features
-
-### 1. **Raw Transcription**
-- Captures speech exactly as it is spoken, including accents, pauses, and filler words.
-- Avoids corrections, punctuation, or modifications.
-
-### 2. **Word-Level Mapping**
-- Maps phonetic transcriptions of individual words to their correct textual forms.
-- Handles homophones and ambiguities based on minimal context.
-
-### 3. **User Control**
-- The user can manually review and correct transcriptions, ensuring the output reflects their intent.
-
-### 4. **Adaptive Learning**
-- The system learns from user corrections over time, improving its accuracy for the user’s unique speech patterns.
+1. **Direct Transcription**  
+   - Keeps every “um,” “uh,” and repetition.  
+   - Avoids system-enforced punctuation or grammar.
+2. **User-Specific Adaptation**  
+   - Focuses on personal recordings.  
+   - Learns quirks and local accent over time.
+3. **Manual Correction**  
+   - The user reviews transcripts.  
+   - Corrections guide further refinements.
 
 ---
 
 ## Implementation Plan
 
-### 1. **Phonetic Model**
-- **Purpose**: Transcribe speech into phonetic representations.
-- **Tools**:
-  - Use a phonetic transcription library (e.g., `espeak`, `g2p`, or CMU Sphinx).
-  - Ensure the model can handle the user’s accent and speech patterns.
-- **Output**: Raw phonetic transcriptions of spoken words.
+1. **Phonetic Model**
+   - Use Montreal Forced Aligner or CMU Sphinx.  
+   - Disable or remove default text cleaning.  
+   - Produce phone-level segments.
 
-### 2. **Fine-Tuned GPT-2 Model**
-- **Purpose**: Map phonetic transcriptions to correct textual forms.
-- **Training Data**:
-  - Collect **~5,000 examples** of phonetic-to-text mappings.
-  - Use recordings of the user reading existing texts to ensure high-quality, personalized data.
-- **Fine-Tuning Process**:
-  1. Generate phonetic transcriptions for each word in the dataset.
-  2. Pair phonetic transcriptions with their correct textual forms (from the original text).
-  3. Fine-tune GPT-2 (or a smaller model like T5) on this dataset.
-- **Output**: Correct textual representations of spoken words.
+2. **Minimal Fine-Tuning**
+   - Gather a small collection (~1,000–5,000 examples) of your own recorded speech.  
+   - Align each phone sequence with the exact textual variant (including stammers).  
+   - Fine-tune GPT-2 or T5 on these mappings.  
 
-### 3. **Data Collection and Fine-Tuning**
-- **Steps**:
-  1. Select existing texts (e.g., books, articles, or custom sentences).
-  2. Read the texts aloud and record the audio.
-  3. Generate phonetic transcriptions for each word.
-  4. Create a dataset of phonetic-to-text mappings.
-  5. Fine-tune the model on this dataset.
-  6. Test the system with new speech samples and refine as needed.
-- **Tools**:
-  - Use Hugging Face’s `transformers` library for fine-tuning GPT-2.
-  - Automate data collection and preprocessing with scripts.
+3. **Real-Time Pipeline**
+   - Feed raw audio into the phonetic model.  
+   - Pass the resulting phone sequence to the fine-tuned model.  
+   - Output text that mirrors your speech patterns.  
 
-### 4. **System Integration**
-- **Real-Time Transcription**:
-  - Integrate the phonetic model and fine-tuned GPT-2 into a real-time transcription pipeline.
-  - Ensure low latency and smooth performance.
-- **User Interaction**:
-  - Allow the user to review and correct transcriptions in real time.
-  - Use manual corrections to further fine-tune the model.
+4. **Ongoing Correction**
+   - Collect user edits as training data.  
+   - Occasionally re-fine-tune to maintain accuracy.
 
 ---
 
-## Expected Challenges and Solutions
+## Timeline
 
-### 1. **Phonetic Model Accuracy**
-- **Challenge**: The phonetic model may struggle with certain accents or speech patterns.
-- **Solution**: Experiment with different phonetic transcription tools and preprocessing techniques.
-
-### 2. **Handling Homophones**
-- **Challenge**: The system may confuse words that sound the same (e.g., "there" and "their").
-- **Solution**: Incorporate minimal context to resolve ambiguities without overcorrecting.
-
-### 3. **Data Collection Effort**
-- **Challenge**: Recording and transcribing 5,000 examples can be time-consuming.
-- **Solution**: Automate parts of the process (e.g., generating phonetic transcriptions) and focus on high-quality data.
-
-### 4. **Fine-Tuning Complexity**
-- **Challenge**: Fine-tuning GPT-2 requires technical expertise.
-- **Solution**: Use pre-trained models and libraries (e.g., Hugging Face) to simplify the process.
-
----
-
-## Timeline and Milestones
-
-| Week       | Task                                                                 |
-|------------|----------------------------------------------------------------------|
-| Week 1-2   | Set up the phonetic model and test it with speech samples.           |
-| Week 3-4   | Record and preprocess ~5,000 phonetic-to-text examples.              |
-| Week 5-6   | Fine-tune GPT-2 on the dataset and evaluate its performance.         |
-| Week 7-8   | Integrate the models into a real-time transcription system.          |
-| Week 9+    | Test, refine, and iterate based on user feedback.                    |
+| Week | Task                                                 |
+|-----:|:-----------------------------------------------------|
+| 1–2  | Install and test phonetic software on small samples. |
+| 3–4  | Record user speech (curated examples).               |
+| 5–6  | Fine-tune GPT-2 or T5; evaluate word/phone error rate. |
+| 7–8  | Integrate real-time transcription; incorporate corrections. |
+| 9+   | Refine model, gather fresh data, iterate.            |
 
 ---
 
 ## Tools and Resources
 
-### 1. **Phonetic Transcription**
-- `espeak`, `g2p`, or CMU Sphinx.
-
-### 2. **Fine-Tuning**
-- Hugging Face’s `transformers` library.
-- Pre-trained GPT-2 or T5 models.
-
-### 3. **Data Collection**
-- Audio recording tools (e.g., Audacity, Python’s `pyaudio`).
-- Scripts for automating phonetic transcription and data pairing.
+- **Forced Alignment**  
+  - [Montreal Forced Aligner](https://github.com/MontrealCorpusTools/Montreal-Forced-Aligner)  
+  - [CMU Sphinx](https://cmusphinx.github.io/)  
+- **Language Model Fine-Tuning**  
+  - [Hugging Face Transformers](https://github.com/huggingface/transformers)  
+  - Pre-trained GPT-2 or T5  
+- **Audio Recording**  
+  - Any basic tool (e.g. Audacity or Python’s `pyaudio`)  
 
 ---
 
 ## Next Steps
-
-1. **Start Small**:
-   - Begin with a small dataset (e.g., 100 sentences) to test the pipeline.
-2. **Scale Up**:
-   - Gradually increase the dataset size as you refine the system.
-3. **Evaluate Performance**:
-   - Use metrics like **word error rate (WER)** to evaluate the model’s performance and identify areas for improvement.
+1. **Start Small**  
+   - Try 50–100 lines to confirm everything works.  
+2. **Refine**  
+   - Gradually expand the dataset.  
+   - Turn off normalisers in alignment tools.  
+3. **Evaluate**  
+   - Track word/phone error rates.  
+   - Identify repeated mistakes (e.g., homophones).  
 
 ---
+
+## Further Reading
+- Sacks, H., Schegloff, E.A., & Jefferson, G. (1974). *A simplest systematics for the organization of turn-taking for conversation.*  
+- Clark, H. H., & Fox Tree, J. E. (2002). “Using uh and um in spontaneous speech.” *Cognition*, 84(1), 73–111.  
+- [Praat](http://www.fon.hum.uva.nl/praat/)  
+- [ELAN](https://archive.mpi.nl/tla/elan)  
+```
